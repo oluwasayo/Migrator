@@ -28,6 +28,8 @@ public class Months {
 
   public Months() {
     months = new LinkedList<>();
+    months.add("JANUARY_2016");
+    months.add("DECEMBER_2015");
     months.add("NOVEMBER_2015");
     months.add("OCTOBER_2015");
     months.add("SEPTEMBER_2015");

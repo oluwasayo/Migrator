@@ -46,7 +46,13 @@ public class Service {
   public void migrate() {
     ProcessFile processFile = getNextProcessingFile();
     if (Objects.nonNull(processFile)) {
-      processFile(processFile);
+
+      if (processFile.getFilePath().contains("DECEMBER_2015")
+              | processFile.getFilePath().contains("JANUARY_2016")) {
+        processFile2(processFile);
+      } else {
+        processFile(processFile);
+      }
     }
   }
 
@@ -106,7 +112,73 @@ public class Service {
     }
   }
 
+  public void processFile2(ProcessFile processFile) {
+    try {
+      String filePath = processFile.getFilePath();
+      JsonReader reader = new JsonReader(new BufferedReader(new FileReader(filePath)));
+      final com.prodigy4440.models2.UnseparatedData unseparatedData[]
+              = new Gson().fromJson(reader, com.prodigy4440.models2.UnseparatedData[].class);
+
+      int start = 0;
+      if (Objects.nonNull(processFile.getCurrentId())) {
+        start = processFile.getCurrentId();
+      }
+      int index = start;
+      int count = 0;
+
+      for (int i = start; i < unseparatedData.length; i++) {
+        com.prodigy4440.models2.UnseparatedData un = unseparatedData[i];
+        LOG.info("Processing Record : " + un.getSerialNo());
+        String bds = Paths.get(filePath).toFile().getName().replace(".json", "");
+        BusinessDistrict bd = GeneralUtil.computeDistrict(bds);
+        persistOrUpdate2(un, bd, em);
+        LOG.info("Done Processing Record : " + un.getSerialNo());
+        count++;
+        index = i;
+        if (count == 1000) {
+          processFile.setStatus(ProcessFile.Status.PROCESSING);
+          processFile.setCurrentId(i);
+          em.merge(processFile);
+          break;
+        }
+      }
+
+      if (index == unseparatedData.length) {
+        processFile.setCurrentId(index);
+        processFile.setStatus(ProcessFile.Status.PROCESSED);
+        em.merge(processFile);
+      }
+    } catch (FileNotFoundException ex) {
+      LOG.info("Error loading file from path, ", ex.getMessage());
+    }
+  }
+
   public void persistOrUpdate(UnseparatedData unseparatedData, BusinessDistrict bd, EntityManager em) {
+    if (Objects.isNull(unseparatedData.getAccountNo())) {
+    } else {
+      Customer tmpCustomer = unseparatedData.fetchCustomer();
+      tmpCustomer.setBusinessDistrict(bd);
+      tmpCustomer.setAccountType(BillingMode.OFFLINE_POSTPAID.name());
+      Long count = em.createQuery("SELECT COUNT(c) From Customer c WHERE c.accountNumber = :numb", Long.class).
+              setParameter("numb", tmpCustomer.getAccountNumber()).getResultList().get(0);
+
+      if (count == 0) {
+        em.persist(unseparatedData.fetchFullCustomer());
+      } else {
+        Customer customer = em.createQuery("SELECT c From Customer c WHERE c.accountNumber = :numb",
+                Customer.class).setParameter("numb", tmpCustomer.getAccountNumber()).getResultList().get(0);
+        Billing billing = unseparatedData.fetchBilling();
+        customer.getBillings().add(billing);
+        billing.setCustomer(customer);
+        customer.getBillings().add(billing);
+        em.merge(customer);
+      }
+    }
+
+  }
+
+  public void persistOrUpdate2(com.prodigy4440.models2.UnseparatedData unseparatedData, BusinessDistrict bd,
+          EntityManager em) {
     if (Objects.isNull(unseparatedData.getAccountNo())) {
     } else {
       Customer tmpCustomer = unseparatedData.fetchCustomer();

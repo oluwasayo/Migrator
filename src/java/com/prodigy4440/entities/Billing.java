@@ -10,6 +10,8 @@ import java.util.Date;
 import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -39,6 +41,7 @@ public class Billing implements Serializable {
   private Date billingDate;
 
   @Column(name = "billing_mode")
+  @Enumerated(EnumType.STRING)
   private BillingMode billingMode;
   
   @Column(name = "account_number")
@@ -441,7 +444,22 @@ public class Billing implements Serializable {
     this.customer = customer;
   }
 
-  
+  public Date getBillingDate() {
+    return billingDate;
+  }
+
+  public void setBillingDate(Date billingDate) {
+    this.billingDate = billingDate;
+  }
+
+  public Date getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(Date createdDate) {
+    this.createdDate = createdDate;
+  }
+
   @Override
   public int hashCode() {
     int hash = 7;

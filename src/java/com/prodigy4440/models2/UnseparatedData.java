@@ -3,15 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.prodigy4440.models;
+package com.prodigy4440.models2;
 
+import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.stream.JsonReader;
 import com.prodigy4440.entities.Billing;
 import com.prodigy4440.entities.BillingMode;
 import com.prodigy4440.entities.Customer;
 import com.prodigy4440.entities.CustomerType;
 import com.prodigy4440.entities.OldAccountDetail;
 import com.prodigy4440.utils.GeneralUtil;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,10 +27,10 @@ import java.util.Objects;
  * @author prodigy4440
  */
 public class UnseparatedData {
-
-  @SerializedName("Serial No")
+  
+  @SerializedName("S/N")
   String serialNo;
-  @SerializedName("Account No")
+  @SerializedName("Account")
   String accountNo;
   @SerializedName("Name")
   String name;
@@ -35,7 +40,7 @@ public class UnseparatedData {
   String address2;
   @SerializedName("Address3")
   String address3;
-  @SerializedName("Meter No")
+  @SerializedName("Meter")
   String meterNo;
   @SerializedName("ADC")
   String adc;
@@ -43,11 +48,11 @@ public class UnseparatedData {
   String noDials;
   @SerializedName("Tariff")
   String tariff;
-  @SerializedName("Pres Read Date")
+  @SerializedName("PresReadDate")
   String presentReadDate;
-  @SerializedName("Present Reading")
+  @SerializedName("Pres Reading")
   String presentReading;
-  @SerializedName("Previous Reading")
+  @SerializedName("PrevReading")
   String previousReading;
   @SerializedName("LAR")
   String lar;
@@ -55,11 +60,11 @@ public class UnseparatedData {
   String multiplier;
   @SerializedName("Consumption")
   String consumption;
-  @SerializedName("Present Read Code")
+  @SerializedName("PresReadCode")
   String presentReadCode;
-  @SerializedName("Energy Charge")
+  @SerializedName("EnergyCharge")
   String energyCharge;
-  @SerializedName("Total CHarge")
+  @SerializedName("TotalCHarge")
   String totalCharge;
   @SerializedName("VAT")
   String vat;
@@ -85,25 +90,25 @@ public class UnseparatedData {
   String fc;
   @SerializedName("Cycle")
   String cycle;
-  @SerializedName("Prev Balance")
+  @SerializedName("PrevBalance")
   String previousBalance;
-  @SerializedName("Closing Balance")
+  @SerializedName("ClosingBalance")
   String closingBalance;
   @SerializedName("Payment")
   String payment;
   @SerializedName("Adjustment")
   String adjustment;
-  @SerializedName("Old Account NO")
+  @SerializedName("OldAccount")
   String oldAccountNo;
   @SerializedName("Metered Status")
   String meteredStatus;
-  @SerializedName("Last Payment")
+  @SerializedName("LastPayment")
   String lastPayment;
-  @SerializedName("Last Date")
+  @SerializedName("LastDate")
   String lastDate;
   @SerializedName("Fixed")
   String fixed;
-  @SerializedName("Customer Status")
+  @SerializedName("Status")
   String customerStatus;
   @SerializedName("Govt")
   String govt;
@@ -741,7 +746,7 @@ public class UnseparatedData {
     if (Objects.nonNull(getTariff())) {
       customer.setTariff(getTariff());
     }
-
+    
     customer.setAccountType(BillingMode.OFFLINE_POSTPAID.name());
     customer.setVsoId("1");
 
@@ -897,7 +902,7 @@ public class UnseparatedData {
     return oldAccountDetail;
   }
 
-  public Customer fetchFullCustomer() {
+  public Customer fetchFullCustomer(){
     Customer customer = fetchCustomer();
     Billing billing = fetchBilling();
     OldAccountDetail oldAccountDetail = fetchOldAccountDetail();
@@ -908,4 +913,14 @@ public class UnseparatedData {
     customer.setOldAccountDetail(oldAccountDetail);
     return customer;
   }
+  
+//  public static void main(String[] args) throws FileNotFoundException {
+//    JsonReader reader = new JsonReader(new FileReader(new File("/home/prodigy4440/Desktop/raw/mixed/DECEMBER_2015/AGBARA.json")));
+//    Gson gson = new Gson();
+//    UnseparatedData[] fromJson = gson.fromJson(reader, UnseparatedData[].class);
+//    for (UnseparatedData unseparatedData : fromJson) {
+//      System.out.println(unseparatedData.meterNo);
+//      System.out.println("----------------------------------------------------------------");
+//    }
+//  }
 }
