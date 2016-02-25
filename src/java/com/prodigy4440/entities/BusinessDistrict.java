@@ -11,7 +11,7 @@ package com.prodigy4440.entities;
  */
 public enum BusinessDistrict {
   LEKKI,
-  ISLAND,
+  ISLANDS,
   AGBARA,
   APAPA,
   FESTAC,

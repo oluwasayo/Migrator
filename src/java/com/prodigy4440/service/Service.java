@@ -18,13 +18,10 @@ import com.prodigy4440.utils.GeneralUtil;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Resource;
 import javax.ejb.Asynchronous;
 import javax.ejb.Stateless;
-import javax.enterprise.concurrent.ManagedExecutorService;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -88,8 +85,7 @@ public class Service {
       for (int i = start; i < unseparatedData.length; i++) {
         UnseparatedData un = unseparatedData[i];
         LOG.info("Processing Record : " + un.getSerialNo());
-        String bds = Paths.get(filePath).toFile().getName().replace(".json", "");
-        BusinessDistrict bd = GeneralUtil.computeDistrict(bds);
+        BusinessDistrict bd = GeneralUtil.computeDistrict(filePath);
         persistOrUpdate(un, bd, em);
         LOG.info("Done Processing Record : " + un.getSerialNo());
         count++;
@@ -129,8 +125,7 @@ public class Service {
       for (int i = start; i < unseparatedData.length; i++) {
         com.prodigy4440.models2.UnseparatedData un = unseparatedData[i];
         LOG.info("Processing Record : " + un.getSerialNo());
-        String bds = Paths.get(filePath).toFile().getName().replace(".json", "");
-        BusinessDistrict bd = GeneralUtil.computeDistrict(bds);
+        BusinessDistrict bd = GeneralUtil.computeDistrict(filePath);
         persistOrUpdate2(un, bd, em);
         LOG.info("Done Processing Record : " + un.getSerialNo());
         count++;
@@ -163,7 +158,7 @@ public class Service {
               setParameter("numb", tmpCustomer.getAccountNumber()).getResultList().get(0);
 
       if (count == 0) {
-        em.persist(unseparatedData.fetchFullCustomer());
+        em.persist(unseparatedData.fetchFullCustomer(bd));
       } else {
         Customer customer = em.createQuery("SELECT c From Customer c WHERE c.accountNumber = :numb",
                 Customer.class).setParameter("numb", tmpCustomer.getAccountNumber()).getResultList().get(0);
@@ -188,7 +183,7 @@ public class Service {
               setParameter("numb", tmpCustomer.getAccountNumber()).getResultList().get(0);
 
       if (count == 0) {
-        em.persist(unseparatedData.fetchFullCustomer());
+        em.persist(unseparatedData.fetchFullCustomer(bd));
       } else {
         Customer customer = em.createQuery("SELECT c From Customer c WHERE c.accountNumber = :numb",
                 Customer.class).setParameter("numb", tmpCustomer.getAccountNumber()).getResultList().get(0);

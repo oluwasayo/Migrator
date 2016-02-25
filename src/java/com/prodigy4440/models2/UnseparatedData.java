@@ -10,6 +10,7 @@ import com.google.gson.annotations.SerializedName;
 import com.google.gson.stream.JsonReader;
 import com.prodigy4440.entities.Billing;
 import com.prodigy4440.entities.BillingMode;
+import com.prodigy4440.entities.BusinessDistrict;
 import com.prodigy4440.entities.Customer;
 import com.prodigy4440.entities.CustomerType;
 import com.prodigy4440.entities.OldAccountDetail;
@@ -902,8 +903,9 @@ public class UnseparatedData {
     return oldAccountDetail;
   }
 
-  public Customer fetchFullCustomer(){
+  public Customer fetchFullCustomer(BusinessDistrict bd){
     Customer customer = fetchCustomer();
+    customer.setBusinessDistrict(bd);
     Billing billing = fetchBilling();
     OldAccountDetail oldAccountDetail = fetchOldAccountDetail();
     List<Billing> billings = new LinkedList<>();

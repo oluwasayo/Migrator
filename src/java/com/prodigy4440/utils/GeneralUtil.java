@@ -6,6 +6,7 @@
 package com.prodigy4440.utils;
 
 import com.prodigy4440.entities.BusinessDistrict;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -65,17 +66,20 @@ public class GeneralUtil {
     return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
   }
 
-  public static BusinessDistrict computeDistrict(String district) {
+  public static BusinessDistrict computeDistrict(String filePath) {
+    String[] split = filePath.split("/");
+    String district = split[split.length-1].replace(".json", "");
+    
     if (district.equalsIgnoreCase("AGBARA")) {
       return BusinessDistrict.AGBARA;
     } else if (district.equalsIgnoreCase("AJELE")) {
-      return BusinessDistrict.ISLAND;
+      return BusinessDistrict.ISLANDS;
     } else if (district.equalsIgnoreCase("IBEJU")) {
       return BusinessDistrict.LEKKI;
     } else if (district.equalsIgnoreCase("LEKKI")) {
       return BusinessDistrict.LEKKI;
     } else if (district.equalsIgnoreCase("ISLAND")) {
-      return BusinessDistrict.ISLAND;
+      return BusinessDistrict.ISLANDS;
     } else if (district.equalsIgnoreCase("APAPA")) {
       return BusinessDistrict.APAPA;
     } else if (district.equalsIgnoreCase("FESTAC")) {
